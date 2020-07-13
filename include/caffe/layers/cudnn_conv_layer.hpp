@@ -48,9 +48,9 @@ class CuDNNConvolutionLayer : public ConvolutionLayer<Dtype> {
   cudaStream_t*  stream_;
 
   // algorithms for forward and backwards convolutions
-  cudnnConvolutionFwdAlgo_t *fwd_algo_;
-  cudnnConvolutionBwdFilterAlgo_t *bwd_filter_algo_;
-  cudnnConvolutionBwdDataAlgo_t *bwd_data_algo_;
+  cudnnConvolutionFwdAlgoPerf_t *fwd_algo_;
+  cudnnConvolutionBwdFilterAlgoPerf_t *bwd_filter_algo_;
+  cudnnConvolutionBwdDataAlgoPerf_t *bwd_data_algo_;
 
   vector<cudnnTensorDescriptor_t> bottom_descs_, top_descs_;
   cudnnTensorDescriptor_t    bias_desc_;
