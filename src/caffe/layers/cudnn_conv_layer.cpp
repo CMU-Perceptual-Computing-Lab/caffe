@@ -23,9 +23,9 @@ void CuDNNConvolutionLayer<Dtype>::LayerSetUp(
   handle_         = new cudnnHandle_t[this->group_ * CUDNN_STREAMS_PER_GROUP];
 
   // Initialize algorithm arrays
-  fwd_algo_       = new cudnnConvolutionFwdAlgo_t[bottom.size()];
-  bwd_filter_algo_= new cudnnConvolutionBwdFilterAlgo_t[bottom.size()];
-  bwd_data_algo_  = new cudnnConvolutionBwdDataAlgo_t[bottom.size()];
+  fwd_algo_       = new cudnnConvolutionFwdAlgoPerf_t[bottom.size()];
+  bwd_filter_algo_= new cudnnConvolutionBwdFilterAlgoPerf_t[bottom.size()];
+  bwd_data_algo_  = new cudnnConvolutionBwdDataAlgoPerf_t[bottom.size()];
 
   // initialize size arrays
   workspace_fwd_sizes_ = new size_t[bottom.size()];
@@ -39,9 +39,9 @@ void CuDNNConvolutionLayer<Dtype>::LayerSetUp(
 
   for (size_t i = 0; i < bottom.size(); ++i) {
     // initialize all to default algorithms
-    fwd_algo_[i] = (cudnnConvolutionFwdAlgo_t)0;
-    bwd_filter_algo_[i] = (cudnnConvolutionBwdFilterAlgo_t)0;
-    bwd_data_algo_[i] = (cudnnConvolutionBwdDataAlgo_t)0;
+    fwd_algo_[i].algo = (cudnnConvolutionFwdAlgo_t)0;
+    bwd_filter_algo_[i].algo = (cudnnConvolutionBwdFilterAlgo_t)0;
+    bwd_data_algo_[i].algo = (cudnnConvolutionBwdDataAlgo_t)0;
     // default algorithms don't require workspace
     workspace_fwd_sizes_[i] = 0;
     workspace_bwd_data_sizes_[i] = 0;
@@ -128,13 +128,13 @@ void CuDNNConvolutionLayer<Dtype>::Reshape(
         stride_h, stride_w);
 
     // choose forward and backward algorithms + workspace(s)
-    CUDNN_CHECK(cudnnGetConvolutionForwardAlgorithm(handle_[0],
+    CUDNN_CHECK(cudnnGetConvolutionForwardAlgorithm_v7(handle_[0],
       bottom_descs_[i],
       filter_desc_,
       conv_descs_[i],
       top_descs_[i],
-      CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT,
-      workspace_limit_bytes,
+      1,
+      0,
       &fwd_algo_[i]));
 
     CUDNN_CHECK(cudnnGetConvolutionForwardWorkspaceSize(handle_[0],
@@ -142,30 +142,28 @@ void CuDNNConvolutionLayer<Dtype>::Reshape(
       filter_desc_,
       conv_descs_[i],
       top_descs_[i],
-      fwd_algo_[i],
+      fwd_algo_[i].algo,
       &(workspace_fwd_sizes_[i])));
 
     // choose backward algorithm for filter
-    CUDNN_CHECK(cudnnGetConvolutionBackwardFilterAlgorithm(handle_[0],
+    CUDNN_CHECK(cudnnGetConvolutionBackwardFilterAlgorithm_v7(handle_[0],
           bottom_descs_[i], top_descs_[i], conv_descs_[i], filter_desc_,
-          CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT,
-          workspace_limit_bytes, &bwd_filter_algo_[i]) );
+          1, 0, &bwd_filter_algo_[i]) );
 
     // get workspace for backwards filter algorithm
     CUDNN_CHECK(cudnnGetConvolutionBackwardFilterWorkspaceSize(handle_[0],
           bottom_descs_[i], top_descs_[i], conv_descs_[i], filter_desc_,
-          bwd_filter_algo_[i], &workspace_bwd_filter_sizes_[i]));
+          bwd_filter_algo_[i].algo, &workspace_bwd_filter_sizes_[i]));
 
     // choose backward algo for data
-    CUDNN_CHECK(cudnnGetConvolutionBackwardDataAlgorithm(handle_[0],
+    CUDNN_CHECK(cudnnGetConvolutionBackwardDataAlgorithm_v7(handle_[0],
           filter_desc_, top_descs_[i], conv_descs_[i], bottom_descs_[i],
-          CUDNN_CONVOLUTION_BWD_DATA_SPECIFY_WORKSPACE_LIMIT,
-        workspace_limit_bytes, &bwd_data_algo_[i]));
+          1, 0, &bwd_data_algo_[i]));
 
     // get workspace size
     CUDNN_CHECK(cudnnGetConvolutionBackwardDataWorkspaceSize(handle_[0],
           filter_desc_, top_descs_[i], conv_descs_[i], bottom_descs_[i],
-          bwd_data_algo_[i], &workspace_bwd_data_sizes_[i]) );
+          bwd_data_algo_[i].algo, &workspace_bwd_data_sizes_[i]) );
   }
 
   // reduce over all workspace sizes to get a maximum to allocate / reallocate
@@ -204,9 +202,9 @@ void CuDNNConvolutionLayer<Dtype>::Reshape(
         workspace_fwd_sizes_[i] = 0;
         workspace_bwd_filter_sizes_[i] = 0;
         workspace_bwd_data_sizes_[i] = 0;
-        fwd_algo_[i] = CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM;
-        bwd_filter_algo_[i] = CUDNN_CONVOLUTION_BWD_FILTER_ALGO_0;
-        bwd_data_algo_[i] = CUDNN_CONVOLUTION_BWD_DATA_ALGO_0;
+        fwd_algo_[i].algo = CUDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM;
+        bwd_filter_algo_[i].algo = CUDNN_CONVOLUTION_BWD_FILTER_ALGO_0;
+        bwd_data_algo_[i].algo = CUDNN_CONVOLUTION_BWD_DATA_ALGO_0;
       }
 
       // NULL out all workspace pointers
