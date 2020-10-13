@@ -7,7 +7,13 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/highgui/highgui_c.h>
 #include <opencv2/imgproc/imgproc.hpp>
+  #ifdef OPENCV_VERSION4
+    // #include "opencv2/imgcodecs/imgcodecs.hpp"
+    #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
+    #define CV_LOAD_IMAGE_GRAYSCALE cv::IMREAD_GRAYSCALE
+  #endif
 #endif  // USE_OPENCV
+
 #include <stdint.h>
 
 #include <algorithm>
@@ -70,6 +76,11 @@ void WriteProtoToBinaryFile(const Message& proto, const char* filename) {
 }
 
 #ifdef USE_OPENCV
+  #ifdef OPENCV_VERSION4
+    // #include "opencv2/imgcodecs/imgcodecs.hpp"
+    #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
+    #define CV_LOAD_IMAGE_GRAYSCALE cv::IMREAD_GRAYSCALE
+  #endif
 cv::Mat ReadImageToCVMat(const string& filename,
     const int height, const int width, const bool is_color) {
   cv::Mat cv_img;
@@ -163,6 +174,11 @@ bool ReadFileToDatum(const string& filename, const int label,
 }
 
 #ifdef USE_OPENCV
+  #ifdef OPENCV_VERSION4
+    // #include "opencv2/imgcodecs/imgcodecs.hpp"
+    #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
+    #define CV_LOAD_IMAGE_GRAYSCALE cv::IMREAD_GRAYSCALE
+  #endif
 cv::Mat DecodeDatumToCVMatNative(const Datum& datum) {
   cv::Mat cv_img;
   CHECK(datum.encoded()) << "Datum not encoded";

@@ -6,6 +6,8 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+set(CMAKE_INSTALL_PREFIX /usr/local/include/caffe)
+
 # ---[ Caffe project
 project(Caffe C CXX)
 
@@ -32,11 +34,12 @@ caffe_option(USE_CUDNN "Build Caffe with cuDNN library support" ON IF NOT CPU_ON
 caffe_option(USE_NCCL "Build Caffe with NCCL library support" OFF)
 caffe_option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 caffe_option(BUILD_python "Build Python wrapper" ON)
-set(python_version "2" CACHE STRING "Specify which Python version to use")
+set(python_version "3" CACHE STRING "Specify which Python version to use")
 caffe_option(BUILD_matlab "Build Matlab wrapper" OFF IF UNIX OR APPLE)
 caffe_option(BUILD_docs   "Build documentation" ON IF UNIX OR APPLE)
 caffe_option(BUILD_python_layer "Build the Caffe Python layer" ON)
 caffe_option(USE_OPENCV "Build with OpenCV support" ON)
+caffe_option(OPENCV_VERSION4 "Build with OpenCV4 support" ON)
 caffe_option(USE_LEVELDB "Build with levelDB" ON)
 caffe_option(USE_LMDB "Build with lmdb" ON)
 caffe_option(ALLOW_LMDB_NOLOCK "Allow MDB_NOLOCK when reading LMDB files (only if necessary)" OFF)

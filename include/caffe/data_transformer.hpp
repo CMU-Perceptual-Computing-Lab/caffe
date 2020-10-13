@@ -51,6 +51,11 @@ class DataTransformer {
                 Blob<Dtype>* transformed_blob);
 
 #ifdef USE_OPENCV
+  #ifdef OPENCV_VERSION4
+    // #include "opencv2/imgcodecs/imgcodecs.hpp"
+    #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
+    #define CV_LOAD_IMAGE_GRAYSCALE cv::IMREAD_GRAYSCALE
+  #endif
   /**
    * @brief Applies the transformation defined in the data layer's
    * transform_param block to a vector of Mat.
