@@ -112,11 +112,6 @@ if(USE_OPENCV)
   list(APPEND Caffe_DEFINITIONS PUBLIC -DUSE_OPENCV)
 endif()
 
-# ---[ Opencv4
-if (OPENCV_VERSION4)
-  list(APPEND Caffe_DEFINITIONS PUBLIC -DOPENCV_VERSION4)
-endif()
-
 # ---[ BLAS
 if(NOT APPLE)
   set(BLAS "Atlas" CACHE STRING "Selected BLAS library")
