@@ -1,10 +1,6 @@
 #ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>
-#ifdef OPENCV_VERSION4
-  // #include "opencv2/imgcodecs/imgcodecs.hpp"
-  #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
-  #define CV_LOAD_IMAGE_GRAYSCALE cv::IMREAD_GRAYSCALE
-#endif
+#include "../../../include/caffe/util/opencv4.hpp"
 #endif  // USE_OPENCV
 
 #include <vector>

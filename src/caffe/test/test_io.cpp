@@ -1,9 +1,5 @@
 #ifdef USE_OPENCV
-  #ifdef OPENCV_VERSION4
-    // #include "opencv2/imgcodecs/imgcodecs.hpp"
-    #define CV_LOAD_IMAGE_COLOR cv::IMREAD_COLOR
-    #define CV_LOAD_IMAGE_GRAYSCALE cv::IMREAD_GRAYSCALE
-  #endif
+  #include "../../../include/caffe/util/opencv4.hpp"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/highgui/highgui_c.h>
