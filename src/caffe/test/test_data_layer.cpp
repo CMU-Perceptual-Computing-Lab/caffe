@@ -1,4 +1,5 @@
 #ifdef USE_OPENCV
+  #include "../../../include/caffe/util/opencv4.hpp"
 #include <string>
 #include <vector>
 

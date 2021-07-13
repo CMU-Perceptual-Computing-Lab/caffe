@@ -32,6 +32,8 @@ class MemoryDataLayer : public BaseDataLayer<Dtype> {
 #ifdef USE_OPENCV
   virtual void AddMatVector(const vector<cv::Mat>& mat_vector,
       const vector<int>& labels);
+
+  #include "../util/opencv4.hpp"
 #endif  // USE_OPENCV
 
   // Reset should accept const pointers, but can't, because the memory

@@ -51,6 +51,7 @@ class DataTransformer {
                 Blob<Dtype>* transformed_blob);
 
 #ifdef USE_OPENCV
+  #include "./util/opencv4.hpp"
   /**
    * @brief Applies the transformation defined in the data layer's
    * transform_param block to a vector of Mat.

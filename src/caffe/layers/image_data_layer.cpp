@@ -1,4 +1,5 @@
 #ifdef USE_OPENCV
+  #include "../../../include/caffe/util/opencv4.hpp"
 #include <opencv2/core/core.hpp>
 
 #include <fstream>  // NOLINT(readability/streams)

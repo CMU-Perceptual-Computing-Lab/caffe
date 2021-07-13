@@ -1,6 +1,8 @@
 #ifdef USE_OPENCV
 #include <opencv2/core/core.hpp>
+#include "../../../include/caffe/util/opencv4.hpp"
 #endif  // USE_OPENCV
+
 #include <stdint.h>
 
 #include <vector>
